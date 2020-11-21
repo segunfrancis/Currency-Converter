@@ -9,6 +9,7 @@ import javax.inject.Inject
  * Created by SegunFrancis
  */
 
+/*
 class CurrencyMapper @Inject constructor() : Mapper<CurrencyDomain, Currency> {
     override fun mapDomainToApp(data: CurrencyDomain): Currency {
         return with(data) {
@@ -186,4 +187,4 @@ class CurrencyMapper @Inject constructor() : Mapper<CurrencyDomain, Currency> {
             }, success, timestamp)
         }
     }
-}
+}*/

@@ -14,7 +14,7 @@ class GetRatesUseCase @Inject constructor(
     private val localRepository: LocalRepository,
     private val dispatcher: CoroutineDispatcher
 ) {
-    operator fun invoke(): Flow<RatesDomain> {
+    fun execute(): Flow<RatesDomain> {
         return localRepository.getAllRates().flowOn(dispatcher)
     }
 }

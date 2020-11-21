@@ -1,6 +1,6 @@
 package com.project.segunfrancis.data.datasource.remote.api
 
-import com.project.segunfrancis.data.datasource.remote.model.CurrencyResponse
+import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -11,5 +11,5 @@ import retrofit2.http.Query
 interface CurrencyApi {
 
     @GET("latest")
-    fun getCurrency(@Query("access_key") apiKey: String): CurrencyResponse
+    suspend fun getCurrency(@Query("access_key") apiKey: String): ResponseBody
 }

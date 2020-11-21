@@ -15,7 +15,7 @@ class InsertRatesUseCase @Inject constructor(
     private val localRepository: LocalRepository,
     private val dispatcher: CoroutineDispatcher
 ) {
-    operator fun invoke(rates: RatesDomain): Flow<Unit> {
+    fun execute(rates: RatesDomain): Flow<Unit> {
         return localRepository.insertRates(rates).flowOn(dispatcher)
     }
 }

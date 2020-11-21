@@ -1,6 +1,5 @@
 package com.project.segunfrancis.domain.repository
 
-import com.project.segunfrancis.domain.model.CurrencyDomain
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -9,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface RemoteRepository {
 
-    fun getCurrency(apiKey: String): Flow<CurrencyDomain>
+    fun getCurrency(apiKey: String): Flow<String>
 }

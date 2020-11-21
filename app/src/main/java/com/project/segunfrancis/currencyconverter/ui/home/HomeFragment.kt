@@ -5,16 +5,48 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.project.segunfrancis.currencyconverter.R
+import androidx.fragment.app.viewModels
+import com.project.segunfrancis.currencyconverter.databinding.FragmentHomeBinding
+import com.project.segunfrancis.currencyconverter.util.Result.*
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
+
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: HomeViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        _binding = FragmentHomeBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.getCurrency.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Loading -> { }
+                is Success -> {
+                    Timber.d(result.data[0].currencyCode)
+                    Timber.d(result.data[0].exchangeRate.toString())
+                }
+                is Error -> {
+                    Timber.d(result.error)
+                }
+            }
+        }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        _binding = null
     }
 }

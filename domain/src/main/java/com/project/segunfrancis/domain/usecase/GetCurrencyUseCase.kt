@@ -15,7 +15,7 @@ class GetCurrencyUseCase @Inject constructor(
     private val remoteRepository: RemoteRepository,
     private val dispatcher: CoroutineDispatcher
 ) {
-    operator fun invoke(apiKey: String): Flow<CurrencyDomain> {
+    fun execute(apiKey: String): Flow<String> {
         return remoteRepository.getCurrency(apiKey).flowOn(dispatcher)
     }
 }

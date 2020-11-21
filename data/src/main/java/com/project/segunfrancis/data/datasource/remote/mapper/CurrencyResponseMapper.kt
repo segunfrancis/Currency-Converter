@@ -9,7 +9,7 @@ import javax.inject.Inject
  * Created by SegunFrancis
  */
 
-class CurrencyResponseMapper @Inject constructor() : Mapper<CurrencyResponse, CurrencyDomain> {
+/*class CurrencyResponseMapper @Inject constructor() : Mapper<CurrencyResponse, CurrencyDomain> {
     override fun mapRemoteToDomain(data: CurrencyResponse): CurrencyDomain {
         return with(data) {
             CurrencyDomain(
@@ -189,4 +189,4 @@ class CurrencyResponseMapper @Inject constructor() : Mapper<CurrencyResponse, Cu
             )
         }
     }
-}
+}*/

@@ -1,8 +1,6 @@
 package com.project.segunfrancis.data.datasource.remote.source
 
 import com.project.segunfrancis.data.datasource.remote.api.CurrencyApi
-import com.project.segunfrancis.data.datasource.remote.mapper.CurrencyResponseMapper
-import com.project.segunfrancis.domain.model.CurrencyDomain
 import com.project.segunfrancis.domain.repository.RemoteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,13 +11,12 @@ import javax.inject.Inject
  */
 
 class RemoteRepositoryImpl @Inject constructor(
-    private val currencyApi: CurrencyApi,
-    private val currencyResponseMapper: CurrencyResponseMapper
+    private val currencyApi: CurrencyApi
 ) :
     RemoteRepository {
-    override fun getCurrency(apiKey: String): Flow<CurrencyDomain> {
+    override fun getCurrency(apiKey: String): Flow<String> {
         return flow {
-            emit(currencyResponseMapper.mapRemoteToDomain(currencyApi.getCurrency(apiKey)))
+            emit(currencyApi.getCurrency(apiKey).string())
         }
     }
 }
