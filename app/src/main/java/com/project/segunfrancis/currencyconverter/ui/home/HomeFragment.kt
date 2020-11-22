@@ -33,7 +33,7 @@ class HomeFragment : Fragment() {
             when (result) {
                 is Loading -> { }
                 is Success -> {
-
+                    Timber.d(result.data.date)
                 }
                 is Error -> {
                     Timber.d(result.error)

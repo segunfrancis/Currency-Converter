@@ -7,23 +7,23 @@ import androidx.lifecycle.viewModelScope
 import com.project.segunfrancis.currencyconverter.BuildConfig
 import com.project.segunfrancis.currencyconverter.mapper.CurrencyMapper
 import com.project.segunfrancis.currencyconverter.model.Currency
-import com.project.segunfrancis.currencyconverter.model.Rates
 import com.project.segunfrancis.currencyconverter.util.Result
 import com.project.segunfrancis.currencyconverter.util.asLiveData
+import com.project.segunfrancis.domain.model.CurrencyDomain
 import com.project.segunfrancis.domain.usecase.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * Created by SegunFrancis
  */
 
 class HomeViewModel @ViewModelInject constructor(
-    private val insertRatesUseCase: InsertCurrencyUseCase,
+    private val insertCurrencyUseCase: InsertCurrencyUseCase,
     private val getCurrencyLocalUseCase: GetCurrencyLocalUseCase,
     private val getCurrencyRemoteUseCase: GetCurrencyRemoteUseCase,
     private val currencyMapper: CurrencyMapper,
@@ -47,21 +47,24 @@ class HomeViewModel @ViewModelInject constructor(
                     _getCurrencyRemote.postValue(Result.Error(it))
                 }
                 .collect {
-                    Timber.d(it.toString())
-                    _getCurrencyRemote.postValue(Result.Success(currencyMapper.mapDomainToApp(it)))
+                    setCurrencyToLocal(it)
                 }
         }
     }
 
-    private fun setCurrencyToLocal(rates: List<Rates>) {
+    private fun setCurrencyToLocal(currency: CurrencyDomain) {
         viewModelScope.launch(dispatcher) {
-
+            insertCurrencyUseCase.execute(currency)
+                .onCompletion { getCurrencyFromLocal() }
+                .collect {  }
         }
     }
 
     private fun getCurrencyFromLocal() {
         viewModelScope.launch(dispatcher) {
-
+            getCurrencyLocalUseCase.execute().collect {
+                _getCurrencyRemote.postValue(Result.Success(currencyMapper.mapDomainToApp(it)))
+            }
         }
     }
 }

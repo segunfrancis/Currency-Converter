@@ -14,17 +14,17 @@ import javax.inject.Inject
 
 class LocalRepositoryImpl @Inject constructor(
     private val database: CurrencyDatabase,
-    private val ratesLocalMapper: CurrencyLocalMapper
+    private val currencyLocalMapper: CurrencyLocalMapper
 ) : LocalRepository {
     override fun getCurrencies(): Flow<CurrencyDomain> {
         return flow {
-            emit(ratesLocalMapper.mapLocalToDomain(database.currencyDao().getAllRates()))
+            emit(currencyLocalMapper.mapLocalToDomain(database.currencyDao().getAllRates()))
         }
     }
 
     override fun insertCurrencies(currency: CurrencyDomain): Flow<Unit> {
         return flow {
-            emit(database.currencyDao().insertRates(ratesLocalMapper.mapDomainToLocal(currency)))
+            emit(database.currencyDao().insertRates(currencyLocalMapper.mapDomainToLocal(currency)))
         }
     }
 }
