@@ -1,13 +1,14 @@
 package com.project.segunfrancis.currencyconverter.ui.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.project.segunfrancis.currencyconverter.databinding.FragmentHomeBinding
 import com.project.segunfrancis.currencyconverter.util.Result.*
+import com.project.segunfrancis.currencyconverter.util.ThousandSeparatorTextWatcher
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -29,9 +30,12 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val thousandSeparatorTextWatcher = ThousandSeparatorTextWatcher(binding.etAmount)
+        binding.etAmount.addTextChangedListener(thousandSeparatorTextWatcher)
         viewModel.getCurrency.observe(viewLifecycleOwner) { result ->
             when (result) {
-                is Loading -> { }
+                is Loading -> {
+                }
                 is Success -> {
                     Timber.d(result.data.date)
                 }
@@ -41,7 +45,6 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
