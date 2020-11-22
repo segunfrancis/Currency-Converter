@@ -9,7 +9,10 @@ import java.text.DecimalFormat
  * Created by SegunFrancis
  */
 
-class ThousandSeparatorTextWatcher(private val editText: EditText) : TextWatcher {
+class ThousandSeparatorTextWatcher(
+    private val editText: EditText,
+    private val textChange: (value: Boolean) -> Unit
+) : TextWatcher {
     private val df: DecimalFormat = DecimalFormat("#,###.##")
     private var cursorPosition = 0
     override fun beforeTextChanged(
@@ -21,7 +24,13 @@ class ThousandSeparatorTextWatcher(private val editText: EditText) : TextWatcher
         cursorPosition = editText.text.toString().length - editText.selectionStart
     }
 
-    override fun onTextChanged(charSequence: CharSequence?, i: Int, i1: Int, i2: Int) {}
+    override fun onTextChanged(charSequence: CharSequence?, i: Int, i1: Int, i2: Int) {
+        if (editText.text.isNullOrEmpty())
+            textChange(false)
+        else
+            textChange(true)
+    }
+
     override fun afterTextChanged(s: Editable?) {
         try {
             editText.removeTextChangedListener(this)
@@ -86,8 +95,8 @@ class ThousandSeparatorTextWatcher(private val editText: EditText) : TextWatcher
         }
 
         /**
-        * Returns the string after removing all the thousands separators.
-        */
+         * Returns the string after removing all the thousands separators.
+         */
         fun getOriginalString(string: String): String {
             return string.replace(thousandSeparator!!, "")
         }
