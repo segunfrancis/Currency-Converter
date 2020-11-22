@@ -1,6 +1,6 @@
 package com.project.segunfrancis.domain.repository
 
-import com.project.segunfrancis.domain.model.RatesDomain
+import com.project.segunfrancis.domain.model.CurrencyDomain
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface LocalRepository {
 
-    fun getAllRates(): Flow<RatesDomain>
+    fun getCurrencies(): Flow<CurrencyDomain>
 
-    fun insertRates(rates: RatesDomain): Flow<Unit>
+    fun insertCurrencies(currency: CurrencyDomain): Flow<Unit>
 }

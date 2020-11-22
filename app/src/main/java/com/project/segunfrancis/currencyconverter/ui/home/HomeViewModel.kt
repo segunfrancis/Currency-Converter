@@ -5,31 +5,32 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.segunfrancis.currencyconverter.BuildConfig
+import com.project.segunfrancis.currencyconverter.mapper.CurrencyMapper
+import com.project.segunfrancis.currencyconverter.model.Currency
 import com.project.segunfrancis.currencyconverter.model.Rates
 import com.project.segunfrancis.currencyconverter.util.Result
 import com.project.segunfrancis.currencyconverter.util.asLiveData
-import com.project.segunfrancis.domain.usecase.GetCurrencyUseCase
-import com.project.segunfrancis.domain.usecase.GetRatesUseCase
-import com.project.segunfrancis.domain.usecase.InsertRatesUseCase
+import com.project.segunfrancis.domain.usecase.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import org.json.JSONObject
+import timber.log.Timber
 
 /**
  * Created by SegunFrancis
  */
 
 class HomeViewModel @ViewModelInject constructor(
-    private val insertRatesUseCase: InsertRatesUseCase,
-    private val getRatesUseCase: GetRatesUseCase,
-    private val getCurrencyUseCase: GetCurrencyUseCase,
+    private val insertRatesUseCase: InsertCurrencyUseCase,
+    private val getCurrencyLocalUseCase: GetCurrencyLocalUseCase,
+    private val getCurrencyRemoteUseCase: GetCurrencyRemoteUseCase,
+    private val currencyMapper: CurrencyMapper,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _getCurrencyRemote = MutableLiveData<Result<List<Rates>>>()
+    private val _getCurrencyRemote = MutableLiveData<Result<Currency>>()
     val getCurrency = _getCurrencyRemote.asLiveData()
 
     init {
@@ -38,7 +39,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     private fun getCurrencyRemote() {
         viewModelScope.launch(dispatcher) {
-            getCurrencyUseCase.execute(BuildConfig.API_KEY)
+            getCurrencyRemoteUseCase.execute(BuildConfig.API_KEY)
                 .onStart {
                     _getCurrencyRemote.postValue(Result.Loading)
                 }
@@ -46,11 +47,8 @@ class HomeViewModel @ViewModelInject constructor(
                     _getCurrencyRemote.postValue(Result.Error(it))
                 }
                 .collect {
-                    val items = JSONObject(it)
-                    val response = items.get("rates").toString()
-
-                    val rates = formatStringResponse(response)
-                    _getCurrencyRemote.postValue(Result.Success(rates))
+                    Timber.d(it.toString())
+                    _getCurrencyRemote.postValue(Result.Success(currencyMapper.mapDomainToApp(it)))
                 }
         }
     }
@@ -65,17 +63,5 @@ class HomeViewModel @ViewModelInject constructor(
         viewModelScope.launch(dispatcher) {
 
         }
-    }
-
-    private fun formatStringResponse(data: String): List<Rates> {
-        val items = data.removePrefix("{").removeSuffix("}").split(",")
-        val rates = mutableListOf<Rates>()
-        items.forEach { item ->
-            val name = item.subSequence(1, 4).toString()
-            val exchanger = item.subSequence(6 until item.length).toString().toDouble()
-            val rate = Rates(name, exchanger)
-            rates.add(rate)
-        }
-        return rates
     }
 }

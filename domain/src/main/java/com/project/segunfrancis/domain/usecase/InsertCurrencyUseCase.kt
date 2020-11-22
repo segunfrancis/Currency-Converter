@@ -1,6 +1,6 @@
 package com.project.segunfrancis.domain.usecase
 
-import com.project.segunfrancis.domain.model.RatesDomain
+import com.project.segunfrancis.domain.model.CurrencyDomain
 import com.project.segunfrancis.domain.repository.LocalRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -10,11 +10,12 @@ import javax.inject.Inject
 /**
  * Created by SegunFrancis
  */
-class GetRatesUseCase @Inject constructor(
+
+class InsertCurrencyUseCase @Inject constructor(
     private val localRepository: LocalRepository,
     private val dispatcher: CoroutineDispatcher
 ) {
-    fun execute(): Flow<RatesDomain> {
-        return localRepository.getAllRates().flowOn(dispatcher)
+    fun execute(currency: CurrencyDomain): Flow<Unit> {
+        return localRepository.insertCurrencies(currency).flowOn(dispatcher)
     }
 }

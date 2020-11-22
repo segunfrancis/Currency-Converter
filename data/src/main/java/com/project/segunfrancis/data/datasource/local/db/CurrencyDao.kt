@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.project.segunfrancis.data.datasource.local.model.RatesLocal
+import com.project.segunfrancis.data.datasource.local.model.CurrencyLocal
 
 /**
  * Created by SegunFrancis
@@ -12,9 +12,9 @@ import com.project.segunfrancis.data.datasource.local.model.RatesLocal
 
 @Dao
 interface CurrencyDao {
-    @Query("SELECT * FROM rates_table")
-    fun getAllRates(): RatesLocal
+    @Query("SELECT * FROM currency_table")
+    fun getAllRates(): CurrencyLocal
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRates(rates: RatesLocal)
+    suspend fun insertRates(rates: CurrencyLocal)
 }
