@@ -38,7 +38,7 @@ class HomeViewModel @ViewModelInject constructor(
         getCurrencyRemote()
     }
 
-    private fun getCurrencyRemote() {
+    fun getCurrencyRemote() {
         viewModelScope.launch(dispatcher) {
             getCurrencyRemoteUseCase.execute(BuildConfig.API_KEY)
                 .onStart {
@@ -59,15 +59,19 @@ class HomeViewModel @ViewModelInject constructor(
         viewModelScope.launch(dispatcher) {
             insertCurrencyUseCase.execute(currency)
                 .onCompletion { getCurrencyFromLocal() }
-                .collect {  }
+                .collect { }
         }
     }
 
     private fun getCurrencyFromLocal() {
         viewModelScope.launch(dispatcher) {
-            getCurrencyLocalUseCase.execute().collect {
-                _getCurrencyRemote.postValue(Result.Success(currencyMapper.mapDomainToApp(it)))
-            }
+            getCurrencyLocalUseCase.execute()
+                .catch {
+                    _getCurrencyRemote.postValue(Result.Error(it))
+                }
+                .collect {
+                    _getCurrencyRemote.postValue(Result.Success(currencyMapper.mapDomainToApp(it)))
+                }
         }
     }
 }

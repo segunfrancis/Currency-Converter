@@ -1,8 +1,11 @@
 package com.project.segunfrancis.currencyconverter.util
 
+import android.graphics.Color
 import android.view.View
+import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import java.util.*
 
 /**
@@ -39,4 +42,13 @@ fun String.toFlagEmoji(): String {
 
 fun Any.containsNothing(): Boolean {
     return toString().isEmpty()
+}
+
+fun ImageView.circularProgress() {
+    setImageDrawable(CircularProgressDrawable(context).apply {
+        setColorSchemeColors(Color.rgb(32, 77, 211), Color.rgb(7, 38, 129), Color.rgb(32, 205, 152))
+        strokeWidth = 10F
+        centerRadius = 80F
+        start()
+    })
 }

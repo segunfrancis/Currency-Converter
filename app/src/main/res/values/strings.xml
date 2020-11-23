@@ -5,4 +5,7 @@
     <string name="text_convert">Convert</string>
     <string name="desc_drop_down_icon">drop-down button</string>
     <string name="desc_toggle_currency">toggle currency button</string>
+    <string name="desc_progress_drawable">progress drawable</string>
+    <string name="text_swipe_down_to_refresh">Swipe down to refresh</string>
+    <string name="text_ok">OK</string>
 </resources>

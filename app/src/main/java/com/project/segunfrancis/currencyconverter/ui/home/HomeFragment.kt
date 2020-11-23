@@ -1,5 +1,6 @@
 package com.project.segunfrancis.currencyconverter.ui.home
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,17 +9,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.project.segunfrancis.currencyconverter.databinding.FragmentHomeBinding
 import com.project.segunfrancis.currencyconverter.model.Rates
+import com.project.segunfrancis.currencyconverter.util.*
+import com.project.segunfrancis.currencyconverter.util.AppConstants.CUSTOM_PROGRESS_DIALOG_TAG
+import com.project.segunfrancis.currencyconverter.util.AppConstants.ON_BOARDING_PREF_KEY
 import com.project.segunfrancis.currencyconverter.util.Result.*
-import com.project.segunfrancis.currencyconverter.util.ThousandSeparatorTextWatcher
 import com.project.segunfrancis.currencyconverter.util.ThousandSeparatorTextWatcher.Companion.getOriginalString
-import com.project.segunfrancis.currencyconverter.util.disable
-import com.project.segunfrancis.currencyconverter.util.enable
-import com.project.segunfrancis.currencyconverter.util.toFlagEmoji
 import com.skydoves.powermenu.CustomPowerMenu
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -26,10 +27,11 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
+
+    @Inject
+    lateinit var preferences: SharedPreferences
     private var exchangeRate1 = 0.0
     private var exchangeRate2 = 0.0
-    private lateinit var customMenu1: CustomPowerMenu.Builder<Rates, PopupMenuAdapter>
-    private lateinit var customMenu2: CustomPowerMenu.Builder<Rates, PopupMenuAdapter>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +45,9 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (!preferences.getBoolean(ON_BOARDING_PREF_KEY, false))
+            CustomProgressDialog().show(childFragmentManager, CUSTOM_PROGRESS_DIALOG_TAG)
+
         val thousandSeparatorTextWatcher =
             ThousandSeparatorTextWatcher(binding.etAmount) { textChange ->
                 if (textChange) {
@@ -52,32 +57,38 @@ class HomeFragment : Fragment() {
                 }
             }
         binding.etAmount.addTextChangedListener(thousandSeparatorTextWatcher)
-        customMenu1 =
-            CustomPowerMenu.Builder<Rates, PopupMenuAdapter>(requireContext(), PopupMenuAdapter())
-                .setOnMenuItemClickListener(onCustom1ClickListener)
-                .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT)
-                .setAutoDismiss(true)
-        customMenu2 =
-            CustomPowerMenu.Builder<Rates, PopupMenuAdapter>(requireContext(), PopupMenuAdapter())
-                .setOnMenuItemClickListener(onCustom2ClickListener)
-                .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
-                .setAutoDismiss(true)
 
         viewModel.getCurrency.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Loading -> {
+                    binding.swipeRefresh.setRefreshing(true)
                 }
                 is Success -> {
+                    binding.swipeRefresh.setRefreshing(false)
                     val currencyRates = result.data.rates
-                    currencyRates.forEach {
-                        customMenu1.addItem(it)
-                        customMenu2.addItem(it)
+                    binding.countryItemLayout.setOnClickListener { view ->
+                        val customMenu1: CustomPowerMenu.Builder<Rates, PopupMenuAdapter> =
+                            CustomPowerMenu.Builder<Rates, PopupMenuAdapter>(
+                                requireContext(),
+                                PopupMenuAdapter()
+                            )
+                                .setOnMenuItemClickListener(onCustom1ClickListener)
+                                .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT)
+                                .setAutoDismiss(true)
+                        currencyRates.forEach { customMenu1.addItem(it) }
+                        customMenu1.build().showAsAnchorLeftBottom(view)
                     }
-                    binding.countryItemLayout.setOnClickListener {
-                        customMenu1.build().showAsAnchorLeftBottom(binding.emojiText1)
-                    }
-                    binding.countryItemLayout2.setOnClickListener {
-                        customMenu2.build().showAsAnchorLeftBottom(binding.emojiText2)
+                    binding.countryItemLayout2.setOnClickListener { view ->
+                        val customMenu2: CustomPowerMenu.Builder<Rates, PopupMenuAdapter> =
+                            CustomPowerMenu.Builder<Rates, PopupMenuAdapter>(
+                                requireContext(),
+                                PopupMenuAdapter()
+                            )
+                                .setOnMenuItemClickListener(onCustom2ClickListener)
+                                .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
+                                .setAutoDismiss(true)
+                        currencyRates.forEach { customMenu2.addItem(it) }
+                        customMenu2.build().showAsAnchorLeftBottom(view)
                     }
 
                     // Setting default values
@@ -92,8 +103,13 @@ class HomeFragment : Fragment() {
                     exchangeRate2 = currencyRates[1].exchangeRate
                 }
                 is Error -> {
+                    binding.swipeRefresh.setRefreshing(false)
                     Timber.d(result.error)
                 }
+            }
+
+            binding.swipeRefresh.setRefreshListener {
+                viewModel.getCurrencyRemote()
             }
         }
 
