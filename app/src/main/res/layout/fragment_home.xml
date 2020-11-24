@@ -49,9 +49,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:fontFamily="@font/abeezee"
+                    android:fontFamily="@font/abel"
                     android:inputType="numberDecimal"
                     android:padding="16dp"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/text" />
@@ -63,7 +64,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/abeezee"
+                    android:fontFamily="@font/abel"
                     android:textSize="18sp"
                     tools:text="EUR" />
             </LinearLayout>
@@ -87,9 +88,11 @@
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:enabled="false"
-                    android:fontFamily="@font/abeezee"
+                    android:fontFamily="@font/abel"
                     android:inputType="numberDecimal"
                     android:padding="16dp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/text" />
@@ -101,7 +104,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/abeezee"
+                    android:fontFamily="@font/abel"
                     android:textSize="18sp"
                     tools:text="CAD" />
             </LinearLayout>
@@ -134,7 +137,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/abeezee"
+                    android:fontFamily="@font/abel"
                     android:textSize="18sp"
                     tools:text="CAD" />
 
@@ -186,7 +189,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/abeezee"
+                    android:fontFamily="@font/abel"
                     android:textSize="18sp"
                     tools:text="EUR" />
 

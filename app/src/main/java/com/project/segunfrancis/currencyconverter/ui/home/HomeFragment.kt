@@ -19,6 +19,7 @@ import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -32,13 +33,14 @@ class HomeFragment : Fragment() {
     lateinit var preferences: SharedPreferences
     private var exchangeRate1 = 0.0
     private var exchangeRate2 = 0.0
+    private var currencyCode1 = ""
+    private var currencyCode2 = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(layoutInflater)
-        binding.convertButton.disable()
         return binding.root
     }
 
@@ -47,6 +49,8 @@ class HomeFragment : Fragment() {
 
         if (!preferences.getBoolean(ON_BOARDING_PREF_KEY, false))
             CustomProgressDialog().show(childFragmentManager, CUSTOM_PROGRESS_DIALOG_TAG)
+
+        binding.convertButton.disable()
 
         val thousandSeparatorTextWatcher =
             ThousandSeparatorTextWatcher(binding.etAmount) { textChange ->
@@ -58,7 +62,7 @@ class HomeFragment : Fragment() {
             }
         binding.etAmount.addTextChangedListener(thousandSeparatorTextWatcher)
 
-        viewModel.getCurrency.observe(viewLifecycleOwner) { result ->
+        viewModel.getCurrency.observe(viewLifecycleOwner, EventObserver { result ->
             when (result) {
                 is Loading -> {
                     binding.swipeRefresh.setRefreshing(true)
@@ -92,26 +96,28 @@ class HomeFragment : Fragment() {
                         customMenu2.build().showAsAnchorLeftBottom(view)
                     }
 
-                    // Setting default values
-                    binding.emojiText1.text = currencyRates[0].currencyCode.toFlagEmoji()
-                    binding.countryCodeText1.text = currencyRates[0].currencyCode
-                    binding.etLabel1.text = currencyRates[0].currencyCode
-                    exchangeRate1 = currencyRates[0].exchangeRate
+                    if (binding.emojiText1.text.isNullOrEmpty()) {
+                        // Setting default values
+                        currencyCode1 = currencyRates[0].currencyCode
+                        binding.emojiText1.text = currencyCode1.toFlagEmoji()
+                        binding.countryCodeText1.text = currencyCode1
+                        binding.etLabel1.text = currencyCode1
+                        exchangeRate1 = currencyRates[0].exchangeRate
 
-                    binding.emojiText2.text = currencyRates[1].currencyCode.toFlagEmoji()
-                    binding.countryCodeText2.text = currencyRates[1].currencyCode
-                    binding.etLabel2.text = currencyRates[1].currencyCode
-                    exchangeRate2 = currencyRates[1].exchangeRate
+                        currencyCode2 = currencyRates[1].currencyCode
+                        binding.emojiText2.text = currencyCode2.toFlagEmoji()
+                        binding.countryCodeText2.text = currencyCode2
+                        binding.etLabel2.text = currencyCode2
+                        exchangeRate2 = currencyRates[1].exchangeRate
+                    }
                 }
                 is NetworkError -> {
                     binding.swipeRefresh.setRefreshing(false)
-                    //Snackbar.make(binding.root, result.errorMessage, Snackbar.LENGTH_LONG).show()
                     requireView().showMessage(result.errorMessage, true)
                     Timber.e(result.error)
                 }
                 is DatabaseError -> {
                     binding.swipeRefresh.setRefreshing(false)
-                    //Snackbar.make(binding.root, result.errorMessage, Snackbar.LENGTH_LONG).show()
                     requireView().showMessage(result.errorMessage, true)
                     Timber.e(result.error)
                 }
@@ -120,17 +126,15 @@ class HomeFragment : Fragment() {
             binding.swipeRefresh.setRefreshListener {
                 viewModel.getCurrencyRemote()
             }
-        }
+        })
 
         binding.convertButton.setOnClickListener {
             if (!binding.etAmount.text.isNullOrEmpty()) {
                 val originalString = getOriginalString(binding.etAmount.text.toString())
                 val amount = originalString.toDouble()
-                Timber.d("Amount: $amount")
-                Timber.d("Exchange Rate 1: $exchangeRate1")
-                Timber.d("Exchange Rate 2: $exchangeRate2")
                 val convertedAmount = (amount.times(exchangeRate2)).div(exchangeRate1)
-                binding.etAmount2.setText(convertedAmount.toString())
+                val decimalFormat = DecimalFormat("#,###.##")
+                binding.etAmount2.setText(decimalFormat.format(convertedAmount))
             }
         }
     }
@@ -141,6 +145,7 @@ class HomeFragment : Fragment() {
             binding.countryCodeText1.text = item.currencyCode
             binding.etLabel1.text = item.currencyCode
             exchangeRate1 = item.exchangeRate
+            currencyCode1 = item.currencyCode
         }
 
     private val onCustom2ClickListener =
@@ -149,6 +154,7 @@ class HomeFragment : Fragment() {
             binding.countryCodeText2.text = item.currencyCode
             binding.etLabel2.text = item.currencyCode
             exchangeRate2 = item.exchangeRate
+            currencyCode2 = item.currencyCode
         }
 
     override fun onDestroyView() {
