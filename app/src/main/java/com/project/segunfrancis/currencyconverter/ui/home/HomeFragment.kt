@@ -65,6 +65,7 @@ class HomeFragment : Fragment() {
                 }
                 is Success -> {
                     binding.swipeRefresh.setRefreshing(false)
+                    requireView().showMessage("Success", false)
                     val currencyRates = result.data.rates
                     binding.countryItemLayout.setOnClickListener { view ->
                         val customMenu1: CustomPowerMenu.Builder<Rates, PopupMenuAdapter> =
@@ -102,9 +103,17 @@ class HomeFragment : Fragment() {
                     binding.etLabel2.text = currencyRates[1].currencyCode
                     exchangeRate2 = currencyRates[1].exchangeRate
                 }
-                is Error -> {
+                is NetworkError -> {
                     binding.swipeRefresh.setRefreshing(false)
-                    Timber.d(result.error)
+                    //Snackbar.make(binding.root, result.errorMessage, Snackbar.LENGTH_LONG).show()
+                    requireView().showMessage(result.errorMessage, true)
+                    Timber.e(result.error)
+                }
+                is DatabaseError -> {
+                    binding.swipeRefresh.setRefreshing(false)
+                    //Snackbar.make(binding.root, result.errorMessage, Snackbar.LENGTH_LONG).show()
+                    requireView().showMessage(result.errorMessage, true)
+                    Timber.e(result.error)
                 }
             }
 

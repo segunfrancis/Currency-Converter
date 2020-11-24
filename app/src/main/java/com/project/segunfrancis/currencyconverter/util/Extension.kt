@@ -1,11 +1,11 @@
 package com.project.segunfrancis.currencyconverter.util
 
-import android.graphics.Color
 import android.view.View
-import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.google.android.material.snackbar.Snackbar
+import com.project.segunfrancis.currencyconverter.R
 import java.util.*
 
 /**
@@ -23,7 +23,7 @@ fun View.makeVisible() {
 }
 
 fun View.disable() {
-    alpha = 0.5F
+    alpha = 0.6F
     isEnabled = false
 }
 
@@ -40,15 +40,14 @@ fun String.toFlagEmoji(): String {
     return String(Character.toChars(firstLetter)) + String(Character.toChars(secondLetter))
 }
 
-fun Any.containsNothing(): Boolean {
-    return toString().isEmpty()
-}
-
-fun ImageView.circularProgress() {
-    setImageDrawable(CircularProgressDrawable(context).apply {
-        setColorSchemeColors(Color.rgb(32, 77, 211), Color.rgb(7, 38, 129), Color.rgb(32, 205, 152))
-        strokeWidth = 10F
-        centerRadius = 80F
-        start()
-    })
+fun View.showMessage(message: String, error: Boolean) {
+    if (error) {
+        val snack = Snackbar.make(this, message, Snackbar.LENGTH_LONG)
+        snack.setBackgroundTint(ContextCompat.getColor(context, R.color.custom_red))
+        snack.show()
+    } else { // Success
+        val snack = Snackbar.make(this, message, Snackbar.LENGTH_SHORT)
+        snack.setBackgroundTint(ContextCompat.getColor(context, R.color.custom_green))
+        snack.show()
+    }
 }

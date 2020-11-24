@@ -9,7 +9,6 @@ import com.project.segunfrancis.currencyconverter.mapper.CurrencyMapper
 import com.project.segunfrancis.currencyconverter.model.Currency
 import com.project.segunfrancis.currencyconverter.util.Result
 import com.project.segunfrancis.currencyconverter.util.asLiveData
-import com.project.segunfrancis.currencyconverter.util.containsNothing
 import com.project.segunfrancis.domain.model.CurrencyDomain
 import com.project.segunfrancis.domain.usecase.*
 import kotlinx.coroutines.CoroutineDispatcher
@@ -35,6 +34,7 @@ class HomeViewModel @ViewModelInject constructor(
     val getCurrency = _getCurrencyRemote.asLiveData()
 
     init {
+        getCurrencyFromLocal()
         getCurrencyRemote()
     }
 
@@ -45,9 +45,7 @@ class HomeViewModel @ViewModelInject constructor(
                     _getCurrencyRemote.postValue(Result.Loading)
                 }
                 .catch {
-                    _getCurrencyRemote.postValue(Result.Error(it))
-                    // Fetch local data if network call fails
-                    getCurrencyFromLocal()
+                    _getCurrencyRemote.postValue(Result.NetworkError(it))
                 }
                 .collect {
                     setCurrencyToLocal(it)
@@ -67,7 +65,7 @@ class HomeViewModel @ViewModelInject constructor(
         viewModelScope.launch(dispatcher) {
             getCurrencyLocalUseCase.execute()
                 .catch {
-                    _getCurrencyRemote.postValue(Result.Error(it))
+                    _getCurrencyRemote.postValue(Result.DatabaseError(it))
                 }
                 .collect {
                     _getCurrencyRemote.postValue(Result.Success(currencyMapper.mapDomainToApp(it)))
