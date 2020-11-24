@@ -4,9 +4,9 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.project.segunfrancis.currencyconverter.BuildConfig
 import com.project.segunfrancis.currencyconverter.mapper.CurrencyMapper
 import com.project.segunfrancis.currencyconverter.model.Currency
+import com.project.segunfrancis.currencyconverter.util.Event
 import com.project.segunfrancis.currencyconverter.util.Result
 import com.project.segunfrancis.currencyconverter.util.asLiveData
 import com.project.segunfrancis.domain.model.CurrencyDomain
@@ -27,24 +27,26 @@ class HomeViewModel @ViewModelInject constructor(
     private val getCurrencyLocalUseCase: GetCurrencyLocalUseCase,
     private val getCurrencyRemoteUseCase: GetCurrencyRemoteUseCase,
     private val currencyMapper: CurrencyMapper,
+    private val apiKey: String,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _getCurrencyRemote = MutableLiveData<Result<Currency>>()
+    private val _getCurrencyRemote = MutableLiveData<Event<Result<Currency>>>()
     val getCurrency = _getCurrencyRemote.asLiveData()
 
     init {
+        getCurrencyFromLocal()
         getCurrencyRemote()
     }
 
-    private fun getCurrencyRemote() {
+    fun getCurrencyRemote() {
         viewModelScope.launch(dispatcher) {
-            getCurrencyRemoteUseCase.execute(BuildConfig.API_KEY)
+            getCurrencyRemoteUseCase.execute(apiKey)
                 .onStart {
-                    _getCurrencyRemote.postValue(Result.Loading)
+                    _getCurrencyRemote.postValue(Event(Result.Loading))
                 }
                 .catch {
-                    _getCurrencyRemote.postValue(Result.Error(it))
+                    _getCurrencyRemote.postValue(Event(Result.NetworkError(it)))
                 }
                 .collect {
                     setCurrencyToLocal(it)
@@ -56,15 +58,19 @@ class HomeViewModel @ViewModelInject constructor(
         viewModelScope.launch(dispatcher) {
             insertCurrencyUseCase.execute(currency)
                 .onCompletion { getCurrencyFromLocal() }
-                .collect {  }
+                .collect { }
         }
     }
 
     private fun getCurrencyFromLocal() {
         viewModelScope.launch(dispatcher) {
-            getCurrencyLocalUseCase.execute().collect {
-                _getCurrencyRemote.postValue(Result.Success(currencyMapper.mapDomainToApp(it)))
-            }
+            getCurrencyLocalUseCase.execute()
+                .catch {
+                    _getCurrencyRemote.postValue(Event(Result.DatabaseError(it)))
+                }
+                .collect {
+                    _getCurrencyRemote.postValue(Event(Result.Success(currencyMapper.mapDomainToApp(it))))
+                }
         }
     }
 }

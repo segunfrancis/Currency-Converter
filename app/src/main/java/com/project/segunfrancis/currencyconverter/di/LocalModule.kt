@@ -1,8 +1,10 @@
 package com.project.segunfrancis.currencyconverter.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.project.segunfrancis.currencyconverter.util.AppConstants.DATABASE_NAME
+import com.project.segunfrancis.currencyconverter.util.AppConstants.SHARED_PREFERENCE_NAME
 import com.project.segunfrancis.data.datasource.local.db.CurrencyDatabase
 import dagger.Module
 import dagger.Provides
@@ -34,5 +36,10 @@ class LocalModule {
     @Provides
     fun provideDispatcher(): CoroutineDispatcher {
         return Dispatchers.IO
+    }
+
+    @Provides
+    fun provideSharedPreference(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
     }
 }
