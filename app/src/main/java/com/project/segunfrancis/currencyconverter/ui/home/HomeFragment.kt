@@ -137,6 +137,25 @@ class HomeFragment : Fragment() {
                 binding.etAmount2.setText(decimalFormat.format(convertedAmount))
             }
         }
+
+        binding.toggleButton.setOnClickListener {
+            // Swapping the currencies
+            val tempRate = exchangeRate1
+            exchangeRate1 = exchangeRate2
+            exchangeRate2 = tempRate
+
+            val tempCurrencyCode = currencyCode1
+            currencyCode1 = currencyCode2
+            currencyCode2 = tempCurrencyCode
+
+            binding.emojiText1.text = currencyCode1.toFlagEmoji()
+            binding.countryCodeText1.text = currencyCode1
+            binding.etLabel1.text = currencyCode1
+
+            binding.emojiText2.text = currencyCode2.toFlagEmoji()
+            binding.countryCodeText2.text = currencyCode2
+            binding.etLabel2.text = currencyCode2
+        }
     }
 
     private val onCustom1ClickListener =

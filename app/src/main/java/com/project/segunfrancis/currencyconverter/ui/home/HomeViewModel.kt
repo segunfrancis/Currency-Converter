@@ -4,7 +4,6 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.project.segunfrancis.currencyconverter.BuildConfig
 import com.project.segunfrancis.currencyconverter.mapper.CurrencyMapper
 import com.project.segunfrancis.currencyconverter.model.Currency
 import com.project.segunfrancis.currencyconverter.util.Event
@@ -28,6 +27,7 @@ class HomeViewModel @ViewModelInject constructor(
     private val getCurrencyLocalUseCase: GetCurrencyLocalUseCase,
     private val getCurrencyRemoteUseCase: GetCurrencyRemoteUseCase,
     private val currencyMapper: CurrencyMapper,
+    private val apiKey: String,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -41,7 +41,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun getCurrencyRemote() {
         viewModelScope.launch(dispatcher) {
-            getCurrencyRemoteUseCase.execute(BuildConfig.API_KEY)
+            getCurrencyRemoteUseCase.execute(apiKey)
                 .onStart {
                     _getCurrencyRemote.postValue(Event(Result.Loading))
                 }
