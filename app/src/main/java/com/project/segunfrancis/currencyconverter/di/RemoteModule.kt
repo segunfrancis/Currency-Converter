@@ -68,4 +68,9 @@ class RemoteModule {
     fun provideCurrencyApi(retrofit: Retrofit): CurrencyApi {
         return retrofit.create(CurrencyApi::class.java)
     }
+
+    @Provides
+    fun provideApiKey(): String {
+        return BuildConfig.API_KEY
+    }
 }

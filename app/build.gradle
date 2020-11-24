@@ -93,7 +93,20 @@ dependencies {
     // Timber
     implementation "com.jakewharton.timber:timber:$timber_version"
 
+    // PowerMenu
+    implementation "com.github.skydoves:powermenu:$powermenu_version"
 
+    // Emoji for country flags
+    implementation "androidx.emoji:emoji:$emoji_version"
+    implementation "androidx.emoji:emoji-appcompat:$emoji_version"
+
+    // IG Refresh layout
+    implementation "com.github.Jamshid-M:IGRefreshLayout:$refresh_layout_version"
+
+    // Lottie Animation
+    implementation "com.airbnb.android:lottie:$lottie_version"
+
+    // Test
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test:rules:1.3.1-alpha02'
