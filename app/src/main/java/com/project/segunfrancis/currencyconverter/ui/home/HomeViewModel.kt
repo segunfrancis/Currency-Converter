@@ -54,7 +54,7 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun setCurrencyToLocal(currency: CurrencyDomain) {
+    fun setCurrencyToLocal(currency: CurrencyDomain) {
         viewModelScope.launch(dispatcher) {
             insertCurrencyUseCase.execute(currency)
                 .onCompletion { getCurrencyFromLocal() }
@@ -62,7 +62,7 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun getCurrencyFromLocal() {
+    fun getCurrencyFromLocal() {
         viewModelScope.launch(dispatcher) {
             getCurrencyLocalUseCase.execute()
                 .catch {
