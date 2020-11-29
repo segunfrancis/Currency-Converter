@@ -38,7 +38,7 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun formatRateResponse(data: String): List<RatesResponse> {
+    fun formatRateResponse(data: String): List<RatesResponse> {
         val items = data.removePrefix("{").removeSuffix("}").split(",")
         val rates = mutableListOf<RatesResponse>()
         items.forEach { item ->

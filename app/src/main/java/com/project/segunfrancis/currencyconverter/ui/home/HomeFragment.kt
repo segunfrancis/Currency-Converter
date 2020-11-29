@@ -70,7 +70,7 @@ class HomeFragment : Fragment() {
                 is Success -> {
                     binding.swipeRefresh.setRefreshing(false)
                     requireView().showMessage("Success", false)
-                    val currencyRates = result.data.rates
+                    val currencyRates = result.data!!.rates
                     binding.countryItemLayout.setOnClickListener { view ->
                         val customMenu1: CustomPowerMenu.Builder<Rates, PopupMenuAdapter> =
                             CustomPowerMenu.Builder<Rates, PopupMenuAdapter>(
