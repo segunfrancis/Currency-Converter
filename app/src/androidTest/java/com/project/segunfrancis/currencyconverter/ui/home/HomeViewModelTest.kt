@@ -32,6 +32,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -88,7 +89,8 @@ class HomeViewModelTest {
     private val getCurrencyRemoteUseCase: GetCurrencyRemoteUseCase =
         GetCurrencyRemoteUseCase(remoteRepository, coroutineDispatcher)
 
-    private val currencyMapper: CurrencyMapper = CurrencyMapper()
+    @Mock
+    lateinit var currencyMapper: CurrencyMapper
 
     private val apiKey: String = BuildConfig.API_KEY
 
