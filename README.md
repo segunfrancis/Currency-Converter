@@ -67,7 +67,7 @@ The Data layer is our access point to external data layers and is used to fetch 
   <img src="https://github.com/segunfrancis/Currency-Converter/blob/master/screens/Screenshot_20201129-042817_Currency%20Converter.jpg" width="40%" alt="Screen3" hspace="15">
   <img src="https://github.com/segunfrancis/Currency-Converter/blob/master/screens/Screenshot_20201129-042835_Currency%20Converter.jpg" width="40%" alt="Screen1" hspace="15">
   <img src="https://github.com/segunfrancis/Currency-Converter/blob/master/screens/Screenshot_20201129-042758_Currency%20Converter.jpg" width="40%" alt="Screen2" hspace="15">
-  <img src="https://github.com/segunfrancis/Currency-Converter/blob/master/screens/Screenshot_20201129-050545_Currency%20Converter.jpg width="40%" alt="Screen4" hspace="15">
+  <img src="https://github.com/segunfrancis/Currency-Converter/blob/master/screens/Screenshot_20201129-050545_Currency%20Converter.jpg" width="40%" alt="Screen4" hspace="15">
   <img src="https://github.com/segunfrancis/Currency-Converter/blob/master/screens/20201129_050959_edited_1.gif" width="40%" alt="Screen5" hspace="15">
 </ul>
 
